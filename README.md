@@ -85,4 +85,10 @@ Berikut adalah tahapan eksperimen yang dilakukan beserta hasilnya:
   
     <img width="1108" height="1029" alt="Screenshot 2026-04-28 140309" src="https://github.com/user-attachments/assets/3af5ca15-2a97-444c-845b-79563bb1c3cb" />
 
+## Bukti Plagiarisme Artikel
+<img width="1569" height="854" alt="Screenshot 2026-04-27 132010" src="https://github.com/user-attachments/assets/35221e16-d38c-47d1-902f-e1dd275fbb65" />
+
+
+
+
 ---
