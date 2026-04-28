@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Live Chat - WebSocket</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 20px; }
+        .chat-container { width: 100%; max-width: 500px; background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px; }
+        .status { font-size: 13px; font-weight: bold; margin-bottom: 10px; color: #e74c3c; padding: 5px; background: #fdf5f5; border-radius: 4px;}
+        .status.connected { color: #2ecc71; background: #f0fdf4; }
+        .chat-box { height: 300px; border: 1px solid #ddd; border-radius: 4px; overflow-y: auto; padding: 10px; margin-bottom: 15px; background: #fafafa; }
+        .message { margin-bottom: 10px; padding: 8px 12px; border-radius: 6px; background: #e1f5fe; font-size: 14px; color: #333;}
+        .message.system { background: #fff3e0; color: #e67e22; font-style: italic; text-align: center; font-size: 12px; }
+        .input-group { display: flex; gap: 10px; }
+        input[type="text"] { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; outline: none; transition: 0.3s;}
+        input[type="text"]:focus { border-color: #3498db; }
+        button { padding: 10px 15px; border: none; background: #3498db; color: white; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s;}
+        button:hover { background: #2980b9; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <h2 style="margin-top: 0;">Live Chat App</h2>
+        <div id="status" class="status">🔴 Status: Menghubungkan ke server...</div>
+        
+        <div id="chatBox" class="chat-box"></div>
+        
+        <div class="input-group">
+            <input type="text" id="messageInput" placeholder="Ketik pesan di sini..." disabled>
+            <button id="sendBtn" onclick="sendMessage()" disabled>Kirim</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Inisialisasi koneksi WebSocket ke server lokal
+        const socket = new WebSocket('ws://localhost:8080');
+
+        // Elemen DOM
+        const statusEl = document.getElementById('status');
+        const chatBoxEl = document.getElementById('chatBox');
+        const messageInputEl = document.getElementById('messageInput');
+        const sendBtnEl = document.getElementById('sendBtn');
+
+        // 2. Event saat koneksi berhasil dibuka
+        socket.addEventListener('open', () => {
+            statusEl.innerHTML = '🟢 Status: Terhubung';
+            statusEl.classList.add('connected');
+            messageInputEl.disabled = false; // Aktifkan input
+            sendBtnEl.disabled = false;      // Aktifkan tombol
+        });
+
+        // 3. Event saat menerima pesan dari server
+        socket.addEventListener('message', (event) => {
+            try {
+                // Parsing format JSON dari server
+                const data = JSON.parse(event.data);
+                tampilkanPesan(data.message, data.type);
+            } catch (e) {
+                console.error('Format pesan tidak valid dari server.');
+            }
+        });
+
+        // 4. Event saat koneksi terputus (misal server mati)
+        socket.addEventListener('close', () => {
+            statusEl.innerHTML = '🔴 Status: Terputus dari server';
+            statusEl.classList.remove('connected');
+            messageInputEl.disabled = true; // Kunci input
+            sendBtnEl.disabled = true;      // Kunci tombol
+            tampilkanPesan('Koneksi ke server terputus.', 'system');
+        });
+
+        // Fungsi untuk mengirim pesan ke server
+        function sendMessage() {
+            const pesan = messageInputEl.value.trim();
+            if (pesan !== '') {
+                socket.send(pesan); // Kirim pesan (text) ke server
+                messageInputEl.value = ''; // Kosongkan form input
+                messageInputEl.focus();    // Kembalikan kursor ke form
+            }
+        }
+
+        // Dukungan agar bisa mengirim pakai tombol "Enter" di keyboard
+        messageInputEl.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Fungsi manipulasi DOM untuk memunculkan bubble chat
+        function tampilkanPesan(pesan, tipe) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message');
+            if (tipe === 'system') msgDiv.classList.add('system');
+            
+            msgDiv.textContent = pesan;
+            chatBoxEl.appendChild(msgDiv);
+            
+            // Otomatis scroll ke bawah saat ada pesan baru
+            chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
+        }
+    </script>
+</body>
+</html>
