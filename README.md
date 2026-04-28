@@ -80,6 +80,9 @@ Berikut adalah tahapan eksperimen yang dilakukan beserta hasilnya:
   * Server menggunakan fungsi `setTimeout` untuk menunda eksekusi selama 1000 milidetik (1 detik) sebelum mengirimkan pesan balasan `type: 'system'` dengan awalan `🤖 Bot:`.
   * Hal ini mensimulasikan jeda natural layaknya *chatbot* AI yang sedang "berpikir" sebelum membalas.
   <img width="1146" height="1054" alt="Screenshot 2026-04-28 135841" src="https://github.com/user-attachments/assets/f0eec275-0aba-4e04-b16c-9d290805b407" />
-
+  
+  * Jika server dimatikan maka seperti ini
+  
+    <img width="1108" height="1029" alt="Screenshot 2026-04-28 140309" src="https://github.com/user-attachments/assets/3af5ca15-2a97-444c-845b-79563bb1c3cb" />
 
 ---
